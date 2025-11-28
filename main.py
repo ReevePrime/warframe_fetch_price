@@ -8,12 +8,14 @@ from pathlib import Path
 import threading
 from config.init import init_wizard, is_config_valid, get_alecaframe_path
 from config.process_item_list import process_item_list
+from config.fetch_item_prices import fetch_in_background
 
 market_list = ["Arcanes", "Arch-Gun", "Arch-Melee", "Archwing", "Melee",
                "Mods", "Primary", "Relics", "Secondary", "Sentinels", "Warframes"]
 
 
-def update_list_of_items(clicked_item, list_var):
+def update_list_of_items(clicked_item, list_var, opt):
+
     directory = get_alecaframe_path()
     aleca_file = Path(directory) / f"{clicked_item}.json"
 
@@ -23,52 +25,11 @@ def update_list_of_items(clicked_item, list_var):
         list_var.set(items_in_category)
 
 
-def get_text(lb, label):
+def get_text(lb, label, opt):
     selection = lb.curselection()
     item = lb.get(selection)
-
-    def fetch_in_background():
-        request_base_url = "https://api.warframe.market/v2/"
-        item_slug = f"{item.lower().replace(" ", "_")}_set"
-        url = f"{request_base_url}item/{item_slug}/set"
-        r = requests.get(url)
-        r_json = r.json()
-        set_data = []
-        for item_entry in r_json["data"]["items"]:
-            item_data = {
-                "slug": item_entry.get("slug"),
-                "id": item_entry.get("id"),
-                "name": item_entry["i18n"]["en"].get("name"),
-                "set": item_entry["setRoot"]
-            }
-            set_data.append(item_data)
-
-        for item_entry in set_data:
-            re = requests.get(
-                f"{request_base_url}orders/item/{item_entry['slug']}/top")
-            re_json = re.json()
-            json_data = re_json["data"]["sell"]
-            ingame_orders = [
-                d for d in json_data if d["user"]["status"] == "ingame"]
-            item_entry["orders"] = ingame_orders[0]
-            time.sleep(1)
-
-        parts_price = sum(part["orders"]["platinum"]
-                          for part in set_data if part["set"] != True)
-        price_summary = []
-        price_summary.append(f"Price of all parts: {parts_price}")
-        for element in set_data:
-            if element["set"] == True:
-                price_summary.append(
-                    f"Set price: {element["orders"]["platinum"]}")
-            else:
-                price_summary.append(
-                    f"{element["name"]}: {element["orders"]["platinum"]}")
-        label_text = "\n".join(price_summary)
-        label.after(0, lambda: label.config(text=label_text))
-
-    thread = threading.Thread(target=fetch_in_background, daemon=True)
-    thread.start()
+    category = opt.get()
+    fetch_in_background(item, label, opt)
 
 
 def run_ui(directory, root):
@@ -95,7 +56,7 @@ def run_ui(directory, root):
 
     # Dropdown menu with better styling
     drop = OptionMenu(left_frame, opt, *market_list,
-                      command=lambda item: update_list_of_items(item, list_var))
+                      command=lambda item: update_list_of_items(item, list_var, opt))
     drop.config(bg="#4a4a4a", fg="#ffffff", font=("Arial", 10),
                 activebackground="#5a5a5a", relief=RAISED, bd=2, width=25)
     drop.grid(row=1, column=0, sticky=EW, pady=(0, 15))
@@ -143,7 +104,7 @@ def run_ui(directory, root):
                        fg="#ffffff", font=("Arial", 10, "bold"),
                        activebackground="#005a9e", relief=RAISED, bd=2,
                        cursor="hand2", padx=20, pady=10,
-                       command=lambda: get_text(lb, label))
+                       command=lambda: get_text(lb, label, opt))
     entry_btn.grid(row=0, column=0, pady=(0, 15))
 
     # Configure grid weights for right frame
