@@ -4,4 +4,6 @@ def process_item_list(clicked_item, data):
         case "Warframes":
             item_list = [element["name"]
                          for element in data if element["name"].endswith("Prime")]
+        case "Arcanes":
+            item_list.remove("Arcane")
     return item_list
