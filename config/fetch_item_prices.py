@@ -3,7 +3,7 @@ import requests
 import time
 
 
-def fetch_in_background(item, label):
+def fetch_in_background(item, label, category):
     request_base_url = "https://api.warframe.market/v2/"
     item_slug = f"{item.lower().replace(" ", "_")}_set"
     url = f"{request_base_url}item/{item_slug}/set"

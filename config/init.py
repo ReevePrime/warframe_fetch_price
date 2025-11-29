@@ -73,16 +73,25 @@ def init_json_directory(root):
     # This will exit the init wizard and the main script can restart
 
 
-def init_wizard(root):
-    label = Label(root, text="""It looks like this is the first time you are running this App.
+def init_wizard(main_container, root):
+    right_frame = LabelFrame(main_container, text="Price Information",
+                             bg="#3c3c3c", fg="#ffffff", font=("Arial", 10, "bold"),
+                             padx=15, pady=15)
+    right_frame.pack(side=LEFT, fill=BOTH, expand=True)
+
+    label = Label(right_frame, text="""It looks like this is the first time you are running this App.
 
 Please select the directory containing your AlecaFrame data,
 usually located in 'C:\\Users\\USER_NAME\\AppData\\Local\\AlecaFrame\\cachedData\\json'""",
-                  justify=CENTER, pady=20)
-    label.place(relx=0.5, rely=0.4, anchor=CENTER)
+                  bg="#4a4a4a", fg="#ffffff", font=("Arial", 10),
+                  relief=FLAT, bd=0, padx=15, pady=15, justify=LEFT, anchor=NW)
+    label.grid(row=1, column=0, sticky=NSEW)
 
     init_button = Button(
-        root, text="Select AlecaFrame JSON Directory",
+        right_frame, text="Select AlecaFrame JSON Directory",
         command=lambda: init_json_directory(root)
     )
     init_button.place(relx=0.5, rely=0.5, anchor=CENTER)
+    # Configure grid weights for right frame
+    right_frame.grid_rowconfigure(1, weight=1)
+    right_frame.grid_columnconfigure(0, weight=1)

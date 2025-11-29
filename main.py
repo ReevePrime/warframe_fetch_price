@@ -9,6 +9,7 @@ import threading
 from config.init import init_wizard, is_config_valid, get_alecaframe_path
 from config.process_item_list import process_item_list
 from config.fetch_item_prices import fetch_in_background
+from config.right_panel import generate_right_panel
 
 market_list = ["Arcanes", "Arch-Gun", "Arch-Melee", "Archwing", "Melee",
                "Mods", "Primary", "Relics", "Secondary", "Sentinels", "Warframes"]
@@ -29,10 +30,10 @@ def get_text(lb, label, opt):
     selection = lb.curselection()
     item = lb.get(selection)
     category = opt.get()
-    fetch_in_background(item, label, opt)
+    fetch_in_background(item, label, category)
 
 
-def run_ui(directory, root):
+def run_ui(root):
     # Configure root window
     root.configure(bg="#2b2b2b")
 
@@ -55,6 +56,7 @@ def run_ui(directory, root):
     opt = StringVar(value="Warframes")
 
     # Dropdown menu with better styling
+    # drop = OptionMenu(left_frame, opt, *market_list)
     drop = OptionMenu(left_frame, opt, *market_list,
                       command=lambda item: update_list_of_items(item, list_var, opt))
     drop.config(bg="#4a4a4a", fg="#ffffff", font=("Arial", 10),
@@ -87,29 +89,10 @@ def run_ui(directory, root):
     left_frame.grid_rowconfigure(3, weight=1)
     left_frame.grid_columnconfigure(0, weight=1)
 
-    # Right panel - Price information
-    right_frame = LabelFrame(main_container, text="Price Information",
-                             bg="#3c3c3c", fg="#ffffff", font=("Arial", 10, "bold"),
-                             padx=15, pady=15)
-    right_frame.pack(side=LEFT, fill=BOTH, expand=True)
-
-    # Price display label with better formatting
-    label = Label(right_frame, text="Select an item and click 'Fetch Prices'",
-                  bg="#4a4a4a", fg="#ffffff", font=("Arial", 10),
-                  relief=FLAT, bd=0, padx=15, pady=15, justify=LEFT, anchor=NW)
-    label.grid(row=1, column=0, sticky=NSEW)
-
-    # Fetch button with better styling
-    entry_btn = Button(right_frame, text="Fetch Prices", bg="#0078d7",
-                       fg="#ffffff", font=("Arial", 10, "bold"),
-                       activebackground="#005a9e", relief=RAISED, bd=2,
-                       cursor="hand2", padx=20, pady=10,
-                       command=lambda: get_text(lb, label, opt))
-    entry_btn.grid(row=0, column=0, pady=(0, 15))
-
-    # Configure grid weights for right frame
-    right_frame.grid_rowconfigure(1, weight=1)
-    right_frame.grid_columnconfigure(0, weight=1)
+    if not is_config_valid():
+        init_wizard(main_container, root)
+    else:
+        generate_right_panel(main_container, opt, get_text, lb)
 
 
 def main():
@@ -118,13 +101,7 @@ def main():
     root.title("Warframe Price Fetcher")
     root.resizable(True, True)
 
-    if not is_config_valid():
-        directory = init_wizard(root)
-    else:
-        directory = get_alecaframe_path()
-
-    if directory:
-        run_ui(directory, root)
+    run_ui(root)
 
     root.mainloop()
 
