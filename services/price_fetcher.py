@@ -1,4 +1,3 @@
-import threading
 import requests
 import time
 
@@ -42,7 +41,3 @@ def fetch_in_background(item, label, category):
                 f"{element["name"]}: {element["orders"]["platinum"]}")
     label_text = "\n".join(price_summary)
     label.after(0, lambda: label.config(text=label_text))
-
-
-thread = threading.Thread(target=fetch_in_background, daemon=True)
-thread.start()
