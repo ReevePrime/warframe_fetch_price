@@ -6,7 +6,7 @@ def create_left_panel(main_container, opt, list_var, update_list_of_items):
     left_frame = LabelFrame(main_container, text="Select Category & Items",
                             bg="#3c3c3c", fg="#ffffff", font=("Arial", 10, "bold"),
                             padx=15, pady=15)
-    left_frame.pack(side=LEFT, fill=BOTH, expand=True, padx=(0, 10))
+    left_frame.grid(row=0, column=0, sticky=NSEW, padx=(0, 10))
 
     category_label = Label(left_frame, text="Category:", bg="#3c3c3c",
                            fg="#ffffff", font=("Arial", 9))

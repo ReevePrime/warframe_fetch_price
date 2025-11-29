@@ -30,6 +30,10 @@ def run_ui(root):
     main_container = Frame(root, bg="#2b2b2b")
     main_container.pack(fill=BOTH, expand=True, padx=20, pady=20)
 
+    main_container.grid_columnconfigure(0, weight=1)
+    main_container.grid_columnconfigure(1, weight=2)
+    main_container.grid_rowconfigure(0, weight=1)
+
     opt = StringVar(value="Warframes")
     list_var = StringVar()
 

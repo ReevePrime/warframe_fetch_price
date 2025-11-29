@@ -30,7 +30,7 @@ def init_wizard(main_container, root):
     right_frame = LabelFrame(main_container, text="Price Information",
                              bg="#3c3c3c", fg="#ffffff", font=("Arial", 10, "bold"),
                              padx=15, pady=15)
-    right_frame.pack(side=LEFT, fill=BOTH, expand=True)
+    right_frame.grid(row=0, column=1, sticky=NSEW)
 
     label = Label(right_frame, text="""It looks like this is the first time you are running this App.
 
