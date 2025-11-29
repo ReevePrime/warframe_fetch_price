@@ -4,7 +4,7 @@ import os
 from services.config_manager import get_config_path
 
 
-def init_json_directory(root):
+def init_json_directory(root, main_container, refresh_callback):
     folder_selected = filedialog.askdirectory(
         title="Select AlecaFrame JSON Directory"
     )
@@ -23,10 +23,11 @@ def init_json_directory(root):
 
     messagebox.showinfo("Success", "Configuration saved successfully!")
 
-    root.destroy()
+    main_container.destroy()
+    refresh_callback(root)
 
 
-def init_wizard(main_container, root):
+def init_wizard(main_container, root, refresh_callback):
     right_frame = LabelFrame(main_container, text="Price Information",
                              bg="#3c3c3c", fg="#ffffff", font=("Arial", 10, "bold"),
                              padx=15, pady=15)
@@ -42,7 +43,7 @@ usually located in 'C:\\Users\\USER_NAME\\AppData\\Local\\AlecaFrame\\cachedData
 
     init_button = Button(
         right_frame, text="Select AlecaFrame JSON Directory",
-        command=lambda: init_json_directory(root)
+        command=lambda: init_json_directory(root, main_container, refresh_callback)
     )
     init_button.place(relx=0.5, rely=0.5, anchor=CENTER)
     right_frame.grid_rowconfigure(1, weight=1)

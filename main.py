@@ -40,7 +40,7 @@ def run_ui(root):
     lb = create_left_panel(main_container, opt, list_var, update_list_of_items)
 
     if not is_config_valid():
-        init_wizard(main_container, root)
+        init_wizard(main_container, root, run_ui)
     else:
         generate_right_panel(main_container, opt, get_text, lb)
 
