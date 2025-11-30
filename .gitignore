@@ -1,3 +1,6 @@
 .venv
 config/alecaframe_data.txt
 config/__pycache__
+tempCodeRunnerFile.py
+.claude
+__pycache__
